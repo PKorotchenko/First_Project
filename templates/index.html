@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}Home - Food Price Tracker{% endblock %}
+
+{% block content %}
+<h2>Stores</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Location</th>
+    </tr>
+    {% for store in stores %}
+    <tr>
+        <td>{{ store[0] }}</td>
+        <td>{{ store[1] }}</td>
+        <td>{{ store[2] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Food Items</h2>
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Date</th>
+        <th>Store</th>
+    </tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item[0] }}</td>
+        <td>${{ "%.2f"|format(item[1]) }}</td>
+        <td>{{ item[2] }}</td>
+        <td>{{ item[3] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
