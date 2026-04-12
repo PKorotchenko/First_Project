@@ -3,12 +3,18 @@
 {% block title %}Add Store - Food Price Tracker{% endblock %}
 
 {% block content %}
-<h2>Add Store</h2>
-<form method="post">
-    <label for="name">Store Name:</label>
-    <input type="text" id="name" name="name" required><br>
-    <label for="location">Location:</label>
-    <input type="text" id="location" name="location"><br>
-    <button type="submit">Add Store</button>
-</form>
+<div class="form-card">
+    <h2>Add Store</h2>
+    <form method="post">
+        <div class="form-row">
+            <label for="name">Store Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-row">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location">
+        </div>
+        <button type="submit">Add Store</button>
+    </form>
+</div>
 {% endblock %}

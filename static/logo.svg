@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="benefitTitle benefitDesc">
+  <title id="benefitTitle">Benefit Food logo</title>
+  <desc id="benefitDesc">A green leaf symbol with the Benefit Food name.</desc>
+  <defs>
+    <linearGradient id="logoGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2f8a55"/>
+      <stop offset="100%" stop-color="#8fd29b"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="30" fill="url(#logoGradient)"/>
+  <path d="M45 95c10-22 26-40 48-40 18 0 34 11 40 28 2 6 2 13 1 20-3-2-6-5-8-9-4-9-10-16-19-20-9-4-20-4-30 0-10 4-17 11-21 20-2 4-6 7-9 10-1-7-1-14 0-19Z" fill="#ffffff" opacity="0.9"/>
+  <text x="80" y="137" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" fill="#ffffff" font-weight="700">Benefit Food</text>
+</svg>

@@ -3,15 +3,19 @@
 {% block title %}Average Price - Food Price Tracker{% endblock %}
 
 {% block content %}
-<h2>Get Average Price</h2>
-<form method="post">
-    <label for="item_name">Item Name:</label>
-    <input type="text" id="item_name" name="item_name" required><br>
-    <button type="submit">Get Average</button>
-</form>
-{% if avg_price is not none %}
-    <h3>Average Price for {{ item_name }}: ${{ "%.2f"|format(avg_price) }}</h3>
-{% elif item_name %}
-    <h3>No data found for {{ item_name }}</h3>
-{% endif %}
+<div class="form-card">
+    <h2>Get Average Price</h2>
+    <form method="post">
+        <div class="form-row">
+            <label for="item_name">Item Name</label>
+            <input type="text" id="item_name" name="item_name" required>
+        </div>
+        <button type="submit">Get Average</button>
+    </form>
+    {% if avg_price is not none %}
+        <div class="message">Average price for <strong>{{ item_name }}</strong>: <strong>${{ "%.2f"|format(avg_price) }}</strong></div>
+    {% elif item_name %}
+        <div class="message">No data found for <strong>{{ item_name }}</strong>.</div>
+    {% endif %}
+</div>
 {% endblock %}
