@@ -25,7 +25,9 @@ class PriceTracker:
             CREATE TABLE IF NOT EXISTS stores (
                 id INTEGER PRIMARY KEY,
                 name TEXT NOT NULL,
-                location TEXT
+                location TEXT,
+                latitude REAL,
+                longitude REAL
             )
         ''')
         cursor.execute('''
@@ -38,20 +40,39 @@ class PriceTracker:
                 FOREIGN KEY (store_id) REFERENCES stores (id)
             )
         ''')
+        cursor.execute('PRAGMA table_info(stores)')
+        columns = [row[1] for row in cursor.fetchall()]
+        if 'latitude' not in columns:
+            cursor.execute('ALTER TABLE stores ADD COLUMN latitude REAL')
+        if 'longitude' not in columns:
+            cursor.execute('ALTER TABLE stores ADD COLUMN longitude REAL')
         conn.commit()
         conn.close()
 
-    def add_store(self, name, location):
+    def add_store(self, name, location, latitude=None, longitude=None):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO stores (name, location) VALUES (?, ?)', (name, location))
+        cursor.execute(
+            'INSERT INTO stores (name, location, latitude, longitude) VALUES (?, ?, ?, ?)',
+            (name, location, latitude, longitude)
+        )
         conn.commit()
         conn.close()
 
     def get_stores(self):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-        cursor.execute('SELECT id, name, location FROM stores')
+        cursor.execute('SELECT id, name, location, latitude, longitude FROM stores')
+        stores = cursor.fetchall()
+        conn.close()
+        return stores
+
+    def get_store_locations(self):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT id, name, location, latitude, longitude FROM stores WHERE latitude IS NOT NULL AND longitude IS NOT NULL'
+        )
         stores = cursor.fetchall()
         conn.close()
         return stores

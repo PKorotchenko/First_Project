@@ -38,9 +38,18 @@ def add_store():
     if request.method == 'POST':
         name = request.form['name']
         location = request.form['location']
-        tracker.add_store(name, location)
+        latitude = request.form.get('latitude') or None
+        longitude = request.form.get('longitude') or None
+        latitude = float(latitude) if latitude else None
+        longitude = float(longitude) if longitude else None
+        tracker.add_store(name, location, latitude, longitude)
         return redirect(url_for('index'))
     return render_template('add_store.html')
+
+@app.route('/stores_map')
+def stores_map():
+    stores = tracker.get_store_locations()
+    return render_template('stores_map.html', stores=stores)
 
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():

@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Nearby Stores - Food Price Tracker{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+{% endblock %}
+
+{% block content %}
+<div class="map-card">
+    <h2>Nearby Stores</h2>
+    {% if stores %}
+    <div id="storeMap"></div>
+    <p class="map-help">Use the map to explore stores with coordinates. Add store latitude and longitude to display locations here.</p>
+    {% else %}
+    <p class="message">No stores with coordinates found yet. Add a store and include latitude/longitude to display nearby locations.</p>
+    {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script>
+    const stores = {{ stores|tojson }};
+    const mapDiv = document.getElementById('storeMap');
+    const validStores = stores.filter(store => store[3] !== null && store[4] !== null && store[3] !== '' && store[4] !== '');
+    if (mapDiv && validStores.length) {
+        const first = validStores[0];
+        const map = L.map('storeMap').setView([Number(first[3]), Number(first[4])], 11);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        validStores.forEach(store => {
+            const [id, name, location, latitude, longitude] = store;
+            const lat = Number(latitude);
+            const lng = Number(longitude);
+            if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup(`<strong>${name}</strong><br>${location || ''}`);
+            }
+        });
+
+        const bounds = L.latLngBounds(validStores.map(store => [Number(store[3]), Number(store[4])]));
+        if (bounds.isValid()) {
+            map.fitBounds(bounds.pad(0.2));
+        }
+    } else if (mapDiv) {
+        mapDiv.style.display = 'none';
+    }
+</script>
+{% endblock %}

@@ -232,6 +232,27 @@ button:focus-visible {
     color: var(--text);
 }
 
+.map-card {
+    padding: 24px;
+    background: var(--surface);
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 40px var(--shadow);
+}
+
+#storeMap {
+    height: 520px;
+    border-radius: 18px;
+    border: 1px solid #d7e7d7;
+    margin-top: 18px;
+}
+
+.map-help {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
 @media (max-width: 640px) {
     .hero {
         grid-template-columns: 1fr;

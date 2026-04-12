@@ -6,6 +6,7 @@
     <title>{% block title %}Food Price Tracker{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <div class="container">
@@ -14,6 +15,7 @@
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('add_store') }}">Add Store</a>
                 <a href="{{ url_for('add_item') }}">Add Item</a>
+                <a href="{{ url_for('stores_map') }}">Nearby Stores</a>
                 <a href="{{ url_for('average_price') }}">Average Price</a>
             </nav>
         </header>
