@@ -15,6 +15,10 @@
             <input type="number" id="price" name="price" step="0.01" required>
         </div>
         <div class="form-row">
+            <label for="date_recorded">Date</label>
+            <input type="date" id="date_recorded" name="date_recorded" value="{{ current_date }}" required>
+        </div>
+        <div class="form-row">
             <label for="store_id">Store</label>
             <select id="store_id" name="store_id" required>
                 {% for store in stores %}

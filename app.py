@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from models import PriceTracker
+from datetime import date, datetime
 
 app = Flask(__name__)
 tracker = PriceTracker()
@@ -9,14 +10,17 @@ def index():
     stores = tracker.get_stores()
     selected_store_id = request.args.get('store_id', type=int)
     selected_item_name = request.args.get('item_name', default=None, type=str)
-    items = tracker.get_food_items(store_id=selected_store_id, item_name=selected_item_name)
+    if selected_item_name == '':
+        selected_item_name = None
     food_names = tracker.get_food_names()
+    chart_item_name = selected_item_name or (food_names[0] if food_names else None)
+    items = tracker.get_food_items(store_id=selected_store_id, item_name=selected_item_name)
     selected_store_name = None
     if selected_store_id:
         selected_store_name = next((store[1] for store in stores if store[0] == selected_store_id), None)
     history = None
-    if selected_item_name:
-        history = tracker.get_price_history(selected_item_name, store_id=selected_store_id)
+    if chart_item_name:
+        history = tracker.get_price_history(chart_item_name, store_id=selected_store_id)
     return render_template(
         'index.html',
         stores=stores,
@@ -26,6 +30,7 @@ def index():
         selected_item_name=selected_item_name,
         selected_store_name=selected_store_name,
         history=history,
+        chart_item_name=chart_item_name,
     )
 
 @app.route('/add_store', methods=['GET', 'POST'])
@@ -40,13 +45,15 @@ def add_store():
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():
     stores = tracker.get_stores()
+    current_date = date.today().isoformat()
     if request.method == 'POST':
         name = request.form['name']
         price = float(request.form['price'])
         store_id = int(request.form['store_id'])
-        tracker.add_food_item(name, price, store_id)
+        date_recorded = request.form.get('date_recorded') or current_date
+        tracker.add_food_item(name, price, store_id, date_recorded)
         return redirect(url_for('index'))
-    return render_template('add_item.html', stores=stores)
+    return render_template('add_item.html', stores=stores, current_date=current_date)
 
 @app.route('/average_price', methods=['GET', 'POST'])
 def average_price():

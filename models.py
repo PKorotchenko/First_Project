@@ -56,11 +56,14 @@ class PriceTracker:
         conn.close()
         return stores
 
-    def add_food_item(self, name, price, store_id):
+    def add_food_item(self, name, price, store_id, date_recorded=None):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO food_items (name, price, store_id, date_recorded) VALUES (?, ?, ?, ?)',
-                       (name, price, store_id, datetime.now().strftime('%Y-%m-%d')))
+        date_recorded = date_recorded or datetime.now().strftime('%Y-%m-%d')
+        cursor.execute(
+            'INSERT INTO food_items (name, price, store_id, date_recorded) VALUES (?, ?, ?, ?)',
+            (name, price, store_id, date_recorded)
+        )
         conn.commit()
         conn.close()
 
