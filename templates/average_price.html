@@ -8,7 +8,7 @@
     <form method="post">
         <div class="form-row">
             <label for="item_name">Item Name</label>
-            <input type="text" id="item_name" name="item_name" required>
+            <input type="text" id="item_name" name="item_name" value="{{ item_name or '' }}" required>
         </div>
         <button type="submit">Get Average</button>
     </form>

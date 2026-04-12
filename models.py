@@ -64,27 +64,56 @@ class PriceTracker:
         conn.commit()
         conn.close()
 
-    def get_food_items(self, store_id=None):
+    def get_food_items(self, store_id=None, item_name=None):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
+        sql = '''
+            SELECT fi.name, fi.price, fi.date_recorded, s.name
+            FROM food_items fi
+            JOIN stores s ON fi.store_id = s.id
+        '''
+        filters = []
+        params = []
         if store_id:
-            cursor.execute('''
-                SELECT fi.name, fi.price, fi.date_recorded, s.name
-                FROM food_items fi
-                JOIN stores s ON fi.store_id = s.id
-                WHERE fi.store_id = ?
-                ORDER BY fi.date_recorded DESC
-            ''', (store_id,))
-        else:
-            cursor.execute('''
-                SELECT fi.name, fi.price, fi.date_recorded, s.name
-                FROM food_items fi
-                JOIN stores s ON fi.store_id = s.id
-                ORDER BY fi.date_recorded DESC
-            ''')
+            filters.append('fi.store_id = ?')
+            params.append(store_id)
+        if item_name:
+            filters.append('fi.name COLLATE NOCASE = ?')
+            params.append(item_name)
+        if filters:
+            sql += ' WHERE ' + ' AND '.join(filters)
+        sql += ' ORDER BY fi.date_recorded DESC'
+        cursor.execute(sql, params)
         items = cursor.fetchall()
         conn.close()
         return items
+
+    def get_food_names(self):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute('SELECT DISTINCT name FROM food_items ORDER BY name COLLATE NOCASE')
+        names = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return names
+
+    def get_price_history(self, item_name, store_id=None):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        sql = '''
+            SELECT fi.date_recorded, fi.price, s.name
+            FROM food_items fi
+            JOIN stores s ON fi.store_id = s.id
+            WHERE fi.name COLLATE NOCASE = ?
+        '''
+        params = [item_name]
+        if store_id:
+            sql += ' AND fi.store_id = ?'
+            params.append(store_id)
+        sql += ' ORDER BY fi.date_recorded ASC'
+        cursor.execute(sql, params)
+        history = cursor.fetchall()
+        conn.close()
+        return history
 
     def get_average_price(self, item_name):
         conn = sqlite3.connect(self.db_name)

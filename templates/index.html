@@ -9,11 +9,35 @@
     </div>
     <div class="hero-copy">
         <h1>Benefit Food</h1>
-        <p>Track food prices across stores with a fresh, easy-to-use interface. Add stores, record item prices, and compare data in one modern dashboard.</p>
+        <p>Use filters to compare food prices by store, follow price changes over time, and keep your shopping choices healthy and affordable.</p>
     </div>
 </section>
 
 <div class="section-grid">
+    <div class="form-card">
+        <h2>Filter prices</h2>
+        <form method="get">
+            <div class="form-row">
+                <label for="store_id">Store</label>
+                <select id="store_id" name="store_id">
+                    <option value="">All stores</option>
+                    {% for store in stores %}
+                    <option value="{{ store[0] }}" {% if selected_store_id == store[0] %}selected{% endif %}>{{ store[1] }} - {{ store[2] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="item_name">Food item</label>
+                <input list="item-list" id="item_name" name="item_name" value="{{ selected_item_name or '' }}" placeholder="Search or choose item">
+                <datalist id="item-list">
+                    {% for name in food_names %}
+                    <option value="{{ name }}"></option>
+                    {% endfor %}
+                </datalist>
+            </div>
+            <button type="submit">Apply filters</button>
+        </form>
+    </div>
     <div class="table-card">
         <h2>Stores</h2>
         <table>
@@ -31,24 +55,81 @@
             {% endfor %}
         </table>
     </div>
-    <div class="table-card">
-        <h2>Latest Food Items</h2>
-        <table>
-            <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>Store</th>
-            </tr>
-            {% for item in items %}
-            <tr>
-                <td>{{ item[0] }}</td>
-                <td>${{ "%.2f"|format(item[1]) }}</td>
-                <td>{{ item[2] }}</td>
-                <td>{{ item[3] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
 </div>
+
+<div class="table-card">
+    <h2>Food Items</h2>
+    {% if items %}
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th>Store</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>${{ "%.2f"|format(item[1]) }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="message">No food items found for the selected filters.</p>
+    {% endif %}
+</div>
+
+{% if history %}
+<div class="chart-card">
+    <h2>Price change for {{ selected_item_name }}</h2>
+    {% if selected_store_name %}
+    <p class="chart-subtitle">Store: {{ selected_store_name }}</p>
+    {% endif %}
+    <canvas id="priceChart"></canvas>
+</div>
+<script>
+    const historyData = {{ history|tojson }};
+    const labels = historyData.map(row => row[0]);
+    const prices = historyData.map(row => row[1]);
+    const ctx = document.getElementById('priceChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Price',
+                    data: prices,
+                    borderColor: '#2d8a4d',
+                    backgroundColor: 'rgba(45, 138, 77, 0.18)',
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: true,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#2d8a4d',
+                }],
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        title: { display: true, text: 'Date' },
+                    },
+                    y: {
+                        grid: { color: 'rgba(45, 138, 77, 0.12)' },
+                        title: { display: true, text: 'Price ($)' },
+                    },
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false },
+                },
+            },
+        });
+    }
+</script>
+{% endif %}
 {% endblock %}
