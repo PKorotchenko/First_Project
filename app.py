@@ -46,11 +46,6 @@ def add_store():
         return redirect(url_for('index'))
     return render_template('add_store.html')
 
-@app.route('/stores_map')
-def stores_map():
-    stores = tracker.get_store_locations()
-    return render_template('stores_map.html', stores=stores)
-
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():
     stores = tracker.get_stores()
