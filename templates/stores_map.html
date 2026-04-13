@@ -3,50 +3,64 @@
 {% block title %}Nearby Stores - Food Price Tracker{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2boQTf4A8R5TQYH0KF0Hq2u0EOYdnd0qK7hUskE=" crossorigin="" />
 {% endblock %}
 
 {% block content %}
 <div class="map-card">
     <h2>Nearby Stores</h2>
-    {% if stores %}
+    {% if locations %}
     <div id="storeMap"></div>
-    <p class="map-help">Use the map to explore stores with coordinates. Add store latitude and longitude to display locations here.</p>
+    <p class="map-help">Markers show stores with saved latitude and longitude coordinates.</p>
+    <div class="table-card" style="margin-top: 24px;">
+        <h3>Store list</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+            {% for store in locations %}
+            <tr>
+                <td>{{ store[1] }}</td>
+                <td>{{ store[2] }}</td>
+                <td>{{ store[3] }}</td>
+                <td>{{ store[4] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     {% else %}
-    <p class="message">No stores with coordinates found yet. Add a store and include latitude/longitude to display nearby locations.</p>
+    <p class="message">No store coordinates available yet. Add a store with latitude and longitude to see it on the map.</p>
     {% endif %}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j7k2R7n8fScpVwhM4MZk3in2Yg7xYk5GkGZ8ajn=" crossorigin=""></script>
 <script>
-    const stores = {{ stores|tojson }};
-    const mapDiv = document.getElementById('storeMap');
-    const validStores = stores.filter(store => store[3] !== null && store[4] !== null && store[3] !== '' && store[4] !== '');
-    if (mapDiv && validStores.length) {
-        const first = validStores[0];
-        const map = L.map('storeMap').setView([Number(first[3]), Number(first[4])], 11);
-
+    const locations = {{ locations|tojson }};
+    if (locations.length > 0) {
+        const map = L.map('storeMap');
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
+            maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        validStores.forEach(store => {
-            const [id, name, location, latitude, longitude] = store;
-            const lat = Number(latitude);
-            const lng = Number(longitude);
-            if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-                L.marker([lat, lng])
-                    .addTo(map)
-                    .bindPopup(`<strong>${name}</strong><br>${location || ''}`);
+        const bounds = [];
+        locations.forEach(store => {
+            const lat = store[3];
+            const lng = store[4];
+            if (lat !== null && lng !== null) {
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup(`<strong>${store[1]}</strong><br>${store[2] || 'No address provided'}`);
+                bounds.push([lat, lng]);
             }
         });
 
-        const bounds = L.latLngBounds(validStores.map(store => [Number(store[3]), Number(store[4])]));
-        if (bounds.isValid()) {
-            map.fitBounds(bounds.pad(0.2));
+        if (bounds.length) {
+            map.fitBounds(bounds, { padding: [40, 40] });
+        } else {
+            map.setView([0, 0], 2);
         }
-    } else if (mapDiv) {
-        mapDiv.style.display = 'none';
     }
 </script>
 {% endblock %}

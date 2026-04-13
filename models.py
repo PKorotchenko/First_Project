@@ -140,9 +140,12 @@ class PriceTracker:
         return history
 
     def get_average_price(self, item_name):
+        item_name = item_name.strip() if item_name else ''
+        if not item_name:
+            return None
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-        cursor.execute('SELECT price FROM food_items WHERE name = ?', (item_name,))
+        cursor.execute('SELECT price FROM food_items WHERE name COLLATE NOCASE = ?', (item_name,))
         prices = cursor.fetchall()
         conn.close()
         if prices:

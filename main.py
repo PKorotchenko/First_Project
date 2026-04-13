@@ -51,9 +51,9 @@ def main():
                 print("No food items found.")
 
         elif choice == '5':
-            item_name = input("Enter food item name: ")
+            item_name = input("Enter food item name: ").strip()
             avg_price = tracker.get_average_price(item_name)
-            if avg_price:
+            if avg_price is not None:
                 print(f"Average price for {item_name}: ${avg_price:.2f}")
             else:
                 print("No data found for that item.")
