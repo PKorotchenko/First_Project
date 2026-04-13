@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="benefitTitle benefitDesc">
   <title id="benefitTitle">Benefit Food logo</title>
-  <desc id="benefitDesc">A green leaf symbol with the Benefit Food name.</desc>
+  <desc id="benefitDesc">A plate with food symbol and the Benefit Food name.</desc>
   <defs>
     <linearGradient id="logoGradient" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#2f8a55"/>
@@ -8,6 +8,23 @@
     </linearGradient>
   </defs>
   <rect width="160" height="160" rx="30" fill="url(#logoGradient)"/>
-  <path d="M45 95c10-22 26-40 48-40 18 0 34 11 40 28 2 6 2 13 1 20-3-2-6-5-8-9-4-9-10-16-19-20-9-4-20-4-30 0-10 4-17 11-21 20-2 4-6 7-9 10-1-7-1-14 0-19Z" fill="#ffffff" opacity="0.9"/>
-  <text x="80" y="137" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" fill="#ffffff" font-weight="700">Benefit Food</text>
+
+  <!-- Тарелка (светло‑бежевая окружность) -->
+  <circle cx="80" cy="80" r="35" fill="#f5f0e6" stroke="#e0d8c8" stroke-width="2"/>
+
+  <!-- Еда на тарелке: три элемента разного цвета и формы -->
+  <!-- Элемент 1: кусочек овоща/фрукта (оранжевый) -->
+  <path d="M65 75 a15 12 0 1 1 20 0 a15 12 0 1 1 -20 0Z" fill="#ff9933"/>
+
+  <!-- Элемент 2: листочек зелени (тёмно‑зелёный) -->
+  <path d="M80 70 c5 -10 15 -5 10 5 c-5 10 -15 5 -10 -5Z" fill="#2e7d32"/>
+
+  <!-- Элемент 3: кругляш (кремовый/белый, например, рис или сыр) -->
+  <circle cx="90" cy="85" r="8" fill="#fff8e1"/>
+
+  <!-- Тень под тарелкой для объёма (полупрозрачная серая) -->
+  <ellipse cx="80" cy="95" rx="28" ry="6" fill="rgba(0,0,0,0.1)" filter="blur(2)"/>
+
+  <!-- Текст с названием бренда -->
+  <text x="80" y="137" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" fill="#ffffff" font-weight="500">Benefit Food</text>
 </svg>
